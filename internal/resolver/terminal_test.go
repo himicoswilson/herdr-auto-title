@@ -8,6 +8,16 @@ import (
 	"github.com/kryptamine/herdr-auto-title/internal/state"
 )
 
+// shippedChain is the chain as the application builds it under the
+// shipped configuration: the agent's name stays out of its titles.
+func shippedChain() *Deterministic {
+	return Default(Options{
+		MaxLength:     DefaultMaxLength,
+		BranchMax:     DefaultBranchMaxLength,
+		HideAgentName: true,
+	})
+}
+
 func tabWithPane(pane *state.PaneState) state.TabState {
 	pane.ID = "wE:p1"
 	_ = pane
@@ -34,6 +44,62 @@ func TestTerminalTitleBeatsTheWorkingDirectory(t *testing.T) {
 
 	if got.Confidence != ConfidenceTerminalTitle {
 		t.Errorf("confidence = %d, want %d", got.Confidence, ConfidenceTerminalTitle)
+	}
+}
+
+func TestPiTerminalTitleDropsItsDirectory(t *testing.T) {
+	t.Parallel()
+
+	got := shippedChain().Resolve(tabWithPane(&state.PaneState{
+		Dir:           dashboard,
+		Agent:         "pi",
+		TerminalTitle: "π - Fix the draw - dashboard",
+	}))
+
+	if got.Name != "dashboard › π - Fix the draw" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - Fix the draw")
+	}
+}
+
+func TestPiTerminalTitleKeepsADirectoryThatIsTheWholeTitle(t *testing.T) {
+	t.Parallel()
+
+	got := shippedChain().Resolve(tabWithPane(&state.PaneState{
+		Dir:           dashboard,
+		Agent:         "pi",
+		TerminalTitle: "π - dashboard",
+	}))
+
+	if got.Name != "dashboard › π - dashboard" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - dashboard")
+	}
+}
+
+func TestPiTerminalTitleDropsOnlyTheLastDirectory(t *testing.T) {
+	t.Parallel()
+
+	got := shippedChain().Resolve(tabWithPane(&state.PaneState{
+		Dir:           dashboard,
+		Agent:         "pi",
+		TerminalTitle: "π - Fix the dashboard - dashboard",
+	}))
+
+	if got.Name != "dashboard › π - Fix the dashboard" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - Fix the dashboard")
+	}
+}
+
+func TestAnotherAgentsTitleKeepsItsShape(t *testing.T) {
+	t.Parallel()
+
+	got := shippedChain().Resolve(tabWithPane(&state.PaneState{
+		Dir:           dashboard,
+		Agent:         "claude",
+		TerminalTitle: "π - Fix the draw - dashboard",
+	}))
+
+	if got.Name != "dashboard › π - Fix the draw - dashboard" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - Fix the draw - dashboard")
 	}
 }
 
