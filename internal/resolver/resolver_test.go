@@ -29,6 +29,24 @@ func defaultChain() *Deterministic {
 	return Default(Options{MaxLength: DefaultMaxLength, BranchMax: DefaultBranchMaxLength})
 }
 
+func TestResolveWithoutContextKeepsOnlyTheActivity(t *testing.T) {
+	t.Parallel()
+
+	chain := Default(Options{
+		MaxLength:   DefaultMaxLength,
+		BranchMax:   DefaultBranchMaxLength,
+		HideContext: true,
+	})
+
+	got := chain.Resolve(tabOf([]*state.PaneState{
+		{ID: "wE:p1", Dir: dashboard, TerminalTitle: "Fix OAuth redirect", Focused: true},
+	}))
+
+	if got.Name != "Fix OAuth redirect" {
+		t.Errorf("name = %q, want %q", got.Name, "Fix OAuth redirect")
+	}
+}
+
 func tabWithCWD(dir string) state.TabState {
 	return tabOf([]*state.PaneState{
 		{ID: "wE:p1", Dir: dir, Focused: true},

@@ -127,6 +127,9 @@ type Options struct {
 	// way round so that the zero value keeps the name, which is what a resolver
 	// built without options wants.
 	HideAgentName bool
+	// HideContext leaves where a pane sits out of a title, keeping only
+	// what it is doing. Stated the same way round as HideAgentName.
+	HideContext bool
 	// Home is the user's home directory, which names no project.
 	Home string
 }
@@ -136,6 +139,7 @@ type Deterministic struct {
 	sources       []Source
 	maxLength     int
 	hideAgentName bool
+	hideContext   bool
 }
 
 var (
@@ -159,6 +163,7 @@ func New(opts Options, sources ...Source) *Deterministic {
 		sources:       ordered,
 		maxLength:     opts.MaxLength,
 		hideAgentName: opts.HideAgentName,
+		hideContext:   opts.HideContext,
 	}
 }
 
@@ -254,6 +259,10 @@ func (d *Deterministic) collect(pane *state.PaneState) collected {
 	// directory keeps it rather than losing it to a name it will not show.
 	if d.hideAgentName {
 		found.parts.Agent = ""
+	}
+
+	if d.hideContext {
+		found.parts.Context = ""
 	}
 
 	return found

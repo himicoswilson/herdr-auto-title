@@ -129,6 +129,7 @@ change. It does not read the config directory that `herdr plugin list` prints.
 | `HERDR_AUTO_TITLE_MAX_LENGTH`   | `50`                                     | Longest title, in columns                                          |
 | `HERDR_AUTO_TITLE_BRANCH_MAX`   | `12`                                     | Longest branch in a title, in columns; `0` hides branches          |
 | `HERDR_AUTO_TITLE_POSITION`     | `true`                                   | Put the tab's position in front of its title                       |
+| `HERDR_AUTO_TITLE_CONTEXT`      | `true`                                   | Put where a pane sits in front of what it is doing                 |
 | `HERDR_AUTO_TITLE_MANUAL_FILE`  | `manual-names.json`, found the same way  | Where names you set by hand are kept; empty keeps them in memory   |
 | `HERDR_AUTO_TITLE_TRANSCRIPT`   | `true`                                   | Read Claude Code's transcript: what an agent is doing, and where     |
 | `HERDR_AUTO_TITLE_AGENT_NAME`   | `false`                                  | Put the agent's name in front of what it is doing                  |

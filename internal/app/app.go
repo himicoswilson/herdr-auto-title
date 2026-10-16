@@ -102,6 +102,7 @@ func Resolvers(
 		MaxLength:     cfg.MaxLength,
 		BranchMax:     cfg.BranchMax,
 		HideAgentName: !cfg.ShowAgentName,
+		HideContext:   cfg.HideContext,
 		Home:          cfg.Home,
 	})
 

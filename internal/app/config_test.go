@@ -100,6 +100,10 @@ func TestLoadConfigDefaults(t *testing.T) {
 		t.Error("positions are off by default")
 	}
 
+	if cfg.HideContext {
+		t.Error("contexts are hidden by default")
+	}
+
 	if cfg.ShowAgentName {
 		t.Error("agent names are shown by default")
 	}
@@ -128,6 +132,20 @@ func TestLoadConfigTurnsPositionsOff(t *testing.T) {
 
 	if cfg.ShowPosition {
 		t.Error("positions are on despite being disabled")
+	}
+}
+
+func TestLoadConfigTurnsContextsOff(t *testing.T) {
+	isolate(t)
+	t.Setenv(EnvContext, "false")
+
+	cfg, warnings := LoadConfig()
+	if len(warnings) != 0 {
+		t.Errorf("warnings = %v, want none", warnings)
+	}
+
+	if !cfg.HideContext {
+		t.Error("contexts are shown despite being disabled")
 	}
 }
 

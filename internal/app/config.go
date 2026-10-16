@@ -23,6 +23,7 @@ const (
 	EnvMaxLength   = "HERDR_AUTO_TITLE_MAX_LENGTH"
 	EnvBranchMax   = "HERDR_AUTO_TITLE_BRANCH_MAX"
 	EnvPosition    = "HERDR_AUTO_TITLE_POSITION"
+	EnvContext     = "HERDR_AUTO_TITLE_CONTEXT"
 	EnvManual      = "HERDR_AUTO_TITLE_MANUAL_FILE"
 	EnvTranscript  = "HERDR_AUTO_TITLE_TRANSCRIPT"
 	EnvAgentName   = "HERDR_AUTO_TITLE_AGENT_NAME"
@@ -60,6 +61,12 @@ type Config struct {
 	// ShowPosition puts each tab's position in front of its title, which is
 	// the key that switches to that tab.
 	ShowPosition bool
+	// HideContext leaves where a pane sits — its workspace, its repository —
+	// out of its title, keeping only what it is doing. It is stated this
+	// way round so that the zero value keeps the context, which is what a
+	// configuration built without it wants: a title outside a repository
+	// is its context and nothing else.
+	HideContext bool
 	// ManualPath is where tabs the user renamed by hand are remembered across
 	// restarts. Empty keeps them in memory only.
 	ManualPath string
@@ -137,6 +144,7 @@ func LoadConfig() (Config, []string) {
 	// Zero is meaningful here, and only here: it leaves branches out of titles.
 	cfg.BranchMax = fromEnv(&warnings, EnvBranchMax, cfg.BranchMax, countOrNone)
 	cfg.ShowPosition = fromEnv(&warnings, EnvPosition, cfg.ShowPosition, boolean)
+	cfg.HideContext = !fromEnv(&warnings, EnvContext, !cfg.HideContext, boolean)
 	cfg.ReadTranscripts = fromEnv(&warnings, EnvTranscript, cfg.ReadTranscripts, boolean)
 	cfg.ShowAgentName = fromEnv(&warnings, EnvAgentName, cfg.ShowAgentName, boolean)
 	cfg.RenamePanes = fromEnv(&warnings, EnvPanes, cfg.RenamePanes, boolean)
