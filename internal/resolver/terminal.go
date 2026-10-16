@@ -44,10 +44,9 @@ func (s TerminalTitle) Resolve(pane *state.PaneState) (Parts, bool) {
 		}
 	}
 
-	// Pi titles its terminal `π - <name> - <directory>`, and the directory
-	// only repeats what the context half of a title already says.
+	// Pi's title is taken whole, as the activity itself.
 	if pane.Agent == "pi" {
-		title = withoutPiDirectory(title, pane.Dir)
+		return piActivity(pane, title)
 	}
 
 	// An agent is a field of its own rather than a bound kind, so it stays.
@@ -58,20 +57,41 @@ func (s TerminalTitle) Resolve(pane *state.PaneState) (Parts, bool) {
 	return activityFrom(pane, title)
 }
 
-// withoutPiDirectory drops the trailing directory from a Pi terminal
-// title. A title without a name in it — `π - <directory>` alone — keeps
+// piActivity is a Pi pane's terminal title as its activity. It does not
+// go through the kind handling activityFrom applies: Pi's title carries
+// its name as a heading — `π - <name> - <directory>` — and the kind
+// stripping would take the heading off once the mark is spelled out,
+// mistaking it for the agent's name said twice. The checks are the
+// ones activityAs makes; only the placing differs.
+func piActivity(pane *state.PaneState, title string) (Parts, bool) {
+	activity, ok := Meaningful(Sanitize(titledByPi(title, pane.Dir), 0))
+	if !ok || echoesAgentName(pane, activity) {
+		return Parts{}, false
+	}
+
+	return Parts{Activity: activity}, true
+}
+
+// titledByPi rewrites a Pi terminal title the way a tab reads it: the
+// Greek letter becomes the word, and the trailing directory goes. A
+// title without a name in it — the mark and a directory alone — keeps
 // its directory: it is all the title says. A last part that is not the
 // pane's own directory is part of the name and stays too.
-func withoutPiDirectory(title, dir string) string {
-	rest, named := strings.CutPrefix(title, "π - ")
-	if !named || dir == "" {
+func titledByPi(title, dir string) string {
+	rest, pi := strings.CutPrefix(title, "π - ")
+	if !pi {
 		return title
 	}
 
-	last := strings.LastIndex(rest, " - ")
-	if last < 0 || rest[last+len(" - "):] != filepath.Base(dir) {
-		return title
+	if dir != "" {
+		if last := strings.LastIndex(
+			rest,
+			" - ",
+		); last >= 0 &&
+			rest[last+len(" - "):] == filepath.Base(dir) {
+			rest = rest[:last]
+		}
 	}
 
-	return "π - " + rest[:last]
+	return "Pi - " + rest
 }

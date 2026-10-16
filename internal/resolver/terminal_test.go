@@ -56,8 +56,8 @@ func TestPiTerminalTitleDropsItsDirectory(t *testing.T) {
 		TerminalTitle: "π - Fix the draw - dashboard",
 	}))
 
-	if got.Name != "dashboard › π - Fix the draw" {
-		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - Fix the draw")
+	if got.Name != "dashboard › Pi - Fix the draw" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › Pi - Fix the draw")
 	}
 }
 
@@ -70,8 +70,8 @@ func TestPiTerminalTitleKeepsADirectoryThatIsTheWholeTitle(t *testing.T) {
 		TerminalTitle: "π - dashboard",
 	}))
 
-	if got.Name != "dashboard › π - dashboard" {
-		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - dashboard")
+	if got.Name != "dashboard › Pi - dashboard" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › Pi - dashboard")
 	}
 }
 
@@ -84,8 +84,8 @@ func TestPiTerminalTitleDropsOnlyTheLastDirectory(t *testing.T) {
 		TerminalTitle: "π - Fix the dashboard - dashboard",
 	}))
 
-	if got.Name != "dashboard › π - Fix the dashboard" {
-		t.Errorf("name = %q, want %q", got.Name, "dashboard › π - Fix the dashboard")
+	if got.Name != "dashboard › Pi - Fix the dashboard" {
+		t.Errorf("name = %q, want %q", got.Name, "dashboard › Pi - Fix the dashboard")
 	}
 }
 
